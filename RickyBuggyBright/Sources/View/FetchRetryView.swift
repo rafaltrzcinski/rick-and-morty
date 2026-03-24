@@ -23,7 +23,7 @@ struct FetchRetryView: View {
                     .lineLimit(1)
                 
                 VStack {
-                    ForEach(errors, id: \.self) { error in
+                    ForEach(errors, id: \.self.type.hashValue) { error in
                         Text(error.localizedDescription)
                             .font(.body)
                             .foregroundColor(.secondary)
@@ -46,6 +46,9 @@ struct FetchRetryView: View {
 
 struct FetchRetryView_Previews: PreviewProvider {
     static var previews: some View {
-        FetchRetryView(errors: [.locationRequestFailed], onRetry: {})
+        FetchRetryView(errors: [
+            APIError(type: .locationRequestFailed),
+            APIError(type: .characterDetailRequestFailed)
+        ], onRetry: {})
     }
 }

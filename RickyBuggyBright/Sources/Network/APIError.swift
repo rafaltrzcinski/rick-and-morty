@@ -5,25 +5,32 @@
 
 import Foundation
 
-// FIXME: 1 - Refactor so it accepts and displays underlaying error
-enum APIError: Error {
-    case imageDataRequestFailed
-    case charactersRequestFailed
-    case characterDetailRequestFailed
-    case locationRequestFailed
+struct APIError: Error {
+    enum ErrorType {
+        case imageDataRequestFailed
+        case charactersRequestFailed
+        case characterDetailRequestFailed
+        case locationRequestFailed
+    }
+    
+    let type: ErrorType
+    let error: Error?
+    
+    init(type: ErrorType, error: Error? = nil) {
+        self.type = type
+        self.error = error
+    }
 }
 
 extension APIError: LocalizedError {
     var localizedDescription: String {
-        switch self {
-        case .imageDataRequestFailed:
-            return "Could not download image"
-        case .charactersRequestFailed:
-            return "Could not fetch characters"
-        case .characterDetailRequestFailed:
-            return "Could not get details of character"
-        case .locationRequestFailed:
-            return "Could not get details of location"
+        let mainError = switch self.type {
+        case .imageDataRequestFailed: "Could not download image"
+        case .charactersRequestFailed: "Could not fetch characters"
+        case .characterDetailRequestFailed: "Could not get details of character"
+        case .locationRequestFailed: "Could not get details of location"
         }
+        
+        return "\(mainError): \(self.error?.localizedDescription ?? "")"
     }
 }
