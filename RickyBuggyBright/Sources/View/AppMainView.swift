@@ -8,6 +8,7 @@ import SwiftUI
 struct AppMainView: View {
     // FIXME: 13 - fix issue with re-invoking network request on tapping show list/hide list
     @ObservedObject var viewModel: AppMainViewModel = AppMainViewModel()
+    @State private var showActionSheet = false
     
     var body: some View {
         NavigationView {
@@ -20,9 +21,6 @@ struct AppMainView: View {
                         sortButton
                     }
                 }
-        }
-        .actionSheet(isPresented: $viewModel.showsSortActionSheet) {
-            sortActionSheet
         }
     }
 }
@@ -44,12 +42,14 @@ private extension AppMainView {
     }
 
     var sortButton: some View {
-        Button(action: viewModel.setShowsSortActionSheet) {
-            Text("Choose Sorting")
+        Button("Choose Sorting") {
+            showActionSheet = true
+        }
+        .actionSheet(isPresented: $showActionSheet) {
+            sortActionSheet
         }
     }
-    
-    // FIXME: 8 - Fix action sheet only appearing once, in other words - after it gets opened and closed, it cannot be opened again
+
     var sortActionSheet: ActionSheet {
         ActionSheet(
             title: Text("Sort method"),
