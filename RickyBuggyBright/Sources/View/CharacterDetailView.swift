@@ -5,7 +5,6 @@
 
 import SwiftUI
 
-// FIXME: 9 - Fix title (character name) so it's displayed on the top, just below navigation bar
 struct CharacterDetailView: View {
     @ObservedObject private var viewModel: CharacterDetailViewModel
     
@@ -14,9 +13,9 @@ struct CharacterDetailView: View {
     }
     
     var body: some View {
+        Text(viewModel.title)
         NavigationView {
             content
-                .navigationTitle(viewModel.title)
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing) {
