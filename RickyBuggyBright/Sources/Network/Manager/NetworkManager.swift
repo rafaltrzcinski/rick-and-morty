@@ -10,8 +10,11 @@ final class NetworkManager: NetworkManagerProtocol {
     
     static let RANDOM_HOST_NAME_TO_FAIL_REQUEST = "thisshouldfail.com"
     
-    // FIXME: 2 - Refactor - add support for different properties eg. POST, httpBody, different timeouts etc.
-    func publisher(path: String) -> Publishers.MapKeyPath<Publishers.MapError<URLSession.DataTaskPublisher, Error>, Data> {
+    func publisher(
+        path: String,
+        method: HttpMethod = .get,
+        timeout: TimeInterval = 5
+    ) -> Publishers.MapKeyPath<Publishers.MapError<URLSession.DataTaskPublisher, Error>, Data> {
         var components = URLComponents()
         components.scheme = "https"
         // This is inteded, if you decide to move this code around please keep functionallity to random fail request
@@ -20,8 +23,8 @@ final class NetworkManager: NetworkManagerProtocol {
         
         // FIXME: 3 - Add "guard let url = components.url else..."
         
-        var request = URLRequest(url: components.url!, timeoutInterval: 5)
-        request.httpMethod = "GET"
+        var request = URLRequest(url: components.url!, timeoutInterval: timeout)
+        request.httpMethod = method.rawValue
 
         return URLSession.shared.dataTaskPublisher(for: request)
             .mapError { $0 as Error }
