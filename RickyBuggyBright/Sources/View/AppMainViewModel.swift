@@ -71,8 +71,21 @@ final class AppMainViewModel: ObservableObject {
                 
                 self?.isLoading = false
             }, receiveValue: { [weak self] characters in
-                self?.characters = characters
+                if let sortMethod = self?.sortMethod {
+                    self?.characters = characters.sortBy(sortMethod)
+                } else {
+                    self?.characters = characters
+                }
             })
             .store(in: &cancellables)
+    }
+}
+
+private extension Array where Element == CharacterResponseModel {
+    func sortBy(_ sortMethod: SortMethod) -> [CharacterResponseModel] {
+        switch sortMethod {
+        case .name: sorted(by: { $0.name > $1.name })
+        case .episodesCount: sorted(by: { $0.episode.count > $1.episode.count })
+        }
     }
 }
