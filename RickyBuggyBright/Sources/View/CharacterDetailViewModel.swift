@@ -75,8 +75,8 @@ final class CharacterDetailViewModel: ObservableObject {
         characterDetailsPublisher
             .map(\.episode)
             .map(\.count)
-            .compactMap(AppearanceFrequency.init(count:))
-            .map(\.popularity)
+            .compactMap(AppearanceFrequency.getBy(appearances:))
+            .map(\.rawValue)
             .assign(to: \.popularityName, on: self)
             .store(in: &cancellables)
         
