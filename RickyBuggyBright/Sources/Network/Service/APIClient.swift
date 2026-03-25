@@ -28,7 +28,7 @@ final class APIClient: APIProtocol {
 
         return Just("/api/character/[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]")
             .setFailureType(to: Error.self)
-            .flatMap { networkManager.publisher(path: $0)}
+            .flatMap { networkManager.publisher(path: $0, method: .get, timeout: 5) }
             .decode(type: [CharacterResponseModel].self, decoder: JSONDecoder())
             .mapError { APIError(type: .charactersRequestFailed, error: $0) }
             .eraseToAnyPublisher()
@@ -39,7 +39,7 @@ final class APIClient: APIProtocol {
 
         return Just("/api/character/\(id)")
             .setFailureType(to: Error.self)
-            .flatMap { networkManager.publisher(path: $0)}
+            .flatMap { networkManager.publisher(path: $0, method: .get, timeout: 5) }
             .decode(type: CharacterResponseModel.self, decoder: JSONDecoder())
             .mapError { APIError(type: .characterDetailRequestFailed, error: $0) }
             .eraseToAnyPublisher()
@@ -50,19 +50,9 @@ final class APIClient: APIProtocol {
 
         return Just("/api/location/\(id)")
             .setFailureType(to: Error.self)
-            .flatMap { networkManager.publisher(path: $0)}
+            .flatMap { networkManager.publisher(path: $0, method: .get, timeout: 5) }
             .decode(type: LocationDetailsResponseModel.self, decoder: JSONDecoder())
             .mapError { APIError(type: .locationRequestFailed, error: $0) }
             .eraseToAnyPublisher()
-    }
-}
-
-extension NetworkManagerProtocol {
-    func publisher(
-        path: String,
-        method: HttpMethod = .get,
-        timeout: TimeInterval = 5
-    ) -> Publishers.MapKeyPath<Publishers.MapError<URLSession.DataTaskPublisher, Error>, Data> {
-        publisher(path: path, method: method, timeout: timeout)
     }
 }
