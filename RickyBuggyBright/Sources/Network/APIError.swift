@@ -11,6 +11,7 @@ struct APIError: Error {
         case charactersRequestFailed
         case characterDetailRequestFailed
         case locationRequestFailed
+        case buildingRequestFailed
     }
     
     let type: ErrorType
@@ -29,6 +30,7 @@ extension APIError: LocalizedError {
         case .charactersRequestFailed: "Could not fetch characters"
         case .characterDetailRequestFailed: "Could not get details of character"
         case .locationRequestFailed: "Could not get details of location"
+        case .buildingRequestFailed: "Could not build request correctly"
         }
         
         return "\(mainError): \(self.error?.localizedDescription ?? "")"

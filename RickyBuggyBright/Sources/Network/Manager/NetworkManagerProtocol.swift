@@ -11,7 +11,7 @@ protocol NetworkManagerProtocol {
         path: String,
         method: HttpMethod,
         timeout: TimeInterval
-    ) -> Publishers.MapKeyPath<Publishers.MapError<URLSession.DataTaskPublisher, Error>, Data>
+    ) -> AnyPublisher<Data, Error>
     
     func publisher(fromURLString urlString: String) -> Publishers.MapError<Publishers.MapKeyPath<Publishers.FlatMap<URLSession.DataTaskPublisher, Publishers.ReceiveOn<Publishers.SetFailureType<Optional<URL>.Publisher, URLError>, DispatchQueue>>, Data>, Error>
 }
