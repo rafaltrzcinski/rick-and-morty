@@ -55,4 +55,15 @@ final class APIClient: APIProtocol {
             .mapError { APIError(type: .locationRequestFailed, error: $0) }
             .eraseToAnyPublisher()
     }
+    
+    func locationPublisher(fromURLString urlString: String) -> LocationPublisher {
+        guard let networkManager = networkManager else { return Empty().eraseToAnyPublisher() }
+
+        return Just(urlString)
+            .setFailureType(to: Error.self)
+            .flatMap(networkManager.publisher(fromURLString:))
+            .decode(type: LocationDetailsResponseModel.self, decoder: JSONDecoder())
+            .mapError { _ in APIError(type: .locationRequestFailed) }
+            .eraseToAnyPublisher()
+    }
 }

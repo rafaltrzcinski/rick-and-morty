@@ -108,9 +108,13 @@ final class CharacterDetailViewModel: ObservableObject {
         isLoading = true
 
         if let apiService = DIContainer.shared.resolve(APIClient.self), let characterID = characterIDSubject.value {
-            Publishers.Zip(apiService.characterDetailPublisher(with: String(characterID)),
-                           // FIXME: 11 - FIX so location is fetched based on character location id
-                           apiService.locationPublisher(with: "2"))
+            apiService.characterDetailPublisher(with: String(characterID))
+                    .flatMap { characterDetails -> AnyPublisher<(CharacterResponseModel, LocationDetailsResponseModel), APIError> in
+                        apiService.locationPublisher(fromURLString: characterDetails.location.url)
+                            .map { location in (characterDetails, location) }
+                            .eraseToAnyPublisher()
+                    }
+                .eraseToAnyPublisher()
                 .sink(receiveCompletion: { [weak self] completion in
                     switch completion {
                     case let .failure(error):
@@ -120,8 +124,8 @@ final class CharacterDetailViewModel: ObservableObject {
                     }
 
                     self?.isLoading = false
-                }, receiveValue: { [weak self] characterDetail, comments in
-                    self?.dataSubject.send((characterDetail, comments))
+                }, receiveValue: { [weak self] characterDetails, location in
+                    self?.dataSubject.send((characterDetails, location))
                 })
                 .store(in: &cancellables)
         }

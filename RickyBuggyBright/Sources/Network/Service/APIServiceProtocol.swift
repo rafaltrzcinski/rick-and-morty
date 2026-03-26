@@ -11,6 +11,7 @@ protocol APIProtocol {
     func charactersPublisher() -> CharactersPublisher
     func characterDetailPublisher(with id: String) -> CharacterDetailsPublisher
     func locationPublisher(with id: String) -> LocationPublisher
+    func locationPublisher(fromURLString urlString: String) -> LocationPublisher
 }
 
 typealias ImageData = Data
